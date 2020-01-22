@@ -1,4 +1,4 @@
 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 Django~=3.0
-
+sqlite3
 -e . 
