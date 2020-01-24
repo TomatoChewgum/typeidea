@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 
 from django.http import HttpResponse
-from .models import  Post, Tag
+from .models import  Post, Tag, Category
 
 
 
@@ -25,13 +25,16 @@ from .models import  Post, Tag
 #
 
 def post_list(request, category_id=None, tag_id=None):
+    tag = None
+    category = None
+
     if tag_id:
         try:
             tag = Tag.objects.get(id=tag_id)
         except Tag.DoesNotExist:
             post_list = []
         else:
-            post_list = Post.objects.filter(status=Post.STATUS_NORMAL)
+            post_list = tag.post_set.filter(status=Post.STATUS_NORMAL)
     else:
         post_list = Post.objects.filter(status=Post.STATUS_NORMAL)
         if category_id:
