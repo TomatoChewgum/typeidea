@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'typeidea', # 增加此app 便于其他app查找到 模板templates下的html文件
     'blog',
     'config',
     'comment',
