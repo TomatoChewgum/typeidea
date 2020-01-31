@@ -87,7 +87,7 @@ class PostAdmin(BaseOwnerAdmin):
 
     #form = PostAdminForm
 
-    #编辑页面
+    # 编辑页面
     # save_on_top = True
     # exclude = ('owner',)
 
@@ -108,18 +108,18 @@ class PostAdmin(BaseOwnerAdmin):
             ),
         }),
         ('内容', {
-            'fields':(
+            'fields': (
                 'desc',
                 'content',
             ),
         }),
-        ('额外信息',{
-            'classes':('collapse',),
+        ('额外信息', {
+            # 'classes':('collapse',),
             'fields':('tag', ),
         })
     )
     # filter_horizontal = ('tag',)
-    filter_vertical = ('tag',)
+    # filter_vertical = ('tag',)
     """ 自定义函数 """
     def operator(self, obj):
         return format_html(

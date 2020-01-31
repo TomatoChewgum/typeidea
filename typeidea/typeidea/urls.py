@@ -16,11 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,re_path
 
-from blog.views import post_list, PostDetailView,post_detail,PostListView,IndexView,CategoryView,TagView,tag_view
-from config.views import links
+""" 配置 RSS 和 sitemap 的urls"""
+from django.contrib.sitemaps import views as sitemap_views
+from blog.rss import LatestPostFeed
+from blog.sitemap import PostSitemap
+
+from blog.views import (post_list, PostDetailView,post_detail,PostListView,IndexView,CategoryView,TagView,tag_view,
+                        SearchView, AuthorView)
+from config.views import links,LinkListView
+from comment.views import CommentView
 
 from typeidea.custom_site import custom_site
 
+import xadmin
 
 
 urlpatterns = [
@@ -34,10 +42,20 @@ urlpatterns = [
     path('category/<int:category_id>/', CategoryView.as_view(), name='category-list'),
     path('tag/<int:tag_id>/', TagView.as_view(), name='tag-list'),
     path('post/<int:post_id>.html', PostDetailView.as_view(), name='post-detail'),
-    path('links/', links, name='links'),
+    path('author/<int:owner_id>/', AuthorView.as_view(), name='author'),
+    path('search/', SearchView.as_view(), name='search'),
+    path('links/', LinkListView.as_view(), name='links'),
+
+    path('comment/', CommentView.as_view(), name='comment'),
+
+    # path('rss|feed/', LatestPostFeed(), name='rss'),
+    path('rss/', LatestPostFeed(), name='rss'),
+    path('sitemap.xml', sitemap_views.sitemap, {'sitemaps': {'posts': PostSitemap}}),
 
     path('super_admin/', admin.site.urls, name='super-admin'),  # 超级管理员登录, django 默认的admin
     # path('admin/', admin.site.urls),
-    path('admin/', custom_site.urls, name='admin'),
+    path('admin/', xadmin.site.urls, name='xadmin'),
+
+
 
 ]
