@@ -89,6 +89,8 @@ class Post(models.Model):
     # 用于存储将 Markdown文本转为 可以直接显示的html文本
     content_html = models.TextField(verbose_name="正文html代码",blank=True,editable=False)
 
+    is_md = models.BooleanField(default=False, verbose_name="markdown语法")
+
     status = models.PositiveIntegerField(default=STATUS_NORMAL,
                                          choices=STATUS_ITEMS, verbose_name="状态")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="分类")
@@ -134,8 +136,13 @@ class Post(models.Model):
         return post_list, category
 
     @classmethod
-    def latest_posts(cls):
+    # def latest_posts(cls):
+    #     queryset = cls.objects.filter(status=cls.STATUS_NORMAL)
+    #     return queryset
+    def latest_posts(cls, with_related=True):
         queryset = cls.objects.filter(status=cls.STATUS_NORMAL)
+        if with_related:
+            queryset = queryset.select_related('owner', 'category')
         return queryset
 
     @classmethod
@@ -143,7 +150,10 @@ class Post(models.Model):
         return cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
 
     def save(self, *args, **kwargs): # 重写 save 方法
-        self.content_html = mistune.markdown(self.content)
+        if self.is_md:
+            self.content_html = mistune.markdown(self.content)  # 将markdown文档转为html格式
+        else:
+            self.content_html = self.content
         super().save(*args, **kwargs)
 
     @cached_property #  cached_property ： 把返回的数据绑到实例上，不需要每次访问都去执行tags函数中的代码

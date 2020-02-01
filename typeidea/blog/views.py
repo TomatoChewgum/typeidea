@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 # Create your views here.
 
 from django.http import HttpResponse
-from django.views.generic import DetailView,ListView
+from django.views.generic import DetailView,ListView,TemplateView
 from django.db.models import Q, F
 
 from comment.forms import CommentForm
@@ -252,6 +252,7 @@ class SearchView(IndexView):
         context.update({
             'keyword': self.request.GET.get('keyword', '')
         })
+        print(context)
         return context
 
     def get_queryset(self):
@@ -259,10 +260,17 @@ class SearchView(IndexView):
         keyword = self.request.GET.get('keyword')
         if not keyword:
             return queryset
-        return queryset.filter(Q(title__incontians=keyword) | Q(desc__incontians=keyword))
+        return queryset.filter(Q(title__icontains=keyword) | Q(desc__icontains=keyword))
 
 class AuthorView(IndexView):
     def get_queryset(self):
         queryset = super().get_queryset()
         author_id = self.kwargs.get('owner_id')
         return queryset.filter(owner_id=author_id)
+
+class Handler404(CommonViewMixin, TemplateView):
+    template_name = '404.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context, status=404)

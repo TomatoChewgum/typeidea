@@ -16,13 +16,13 @@ from typeidea.custom_site import custom_site
 from typeidea.base_admin import BaseOwnerAdmin
 
 
-class PostInline(admin.TabularInline): # 可以选择继承 admin.TabularInline  admin.StackedInline
+class PostInline: # 可以选择继承 admin.TabularInline  admin.StackedInline
     form_layout = (
         Container(
             Row("title", "desc"),
         )
     )
-    extra = 0 # 控制额外显示几个
+    extra = 1 # 控制额外显示几个
     model = Post
 
 @xadmin.sites.register(Category)
@@ -126,6 +126,9 @@ class PostAdmin(BaseOwnerAdmin):
         Fieldset(
             '内容信息',
             'desc',
+            'is_md',
+            'content_ck',
+            'content_md',
             'content',
         ),
     )

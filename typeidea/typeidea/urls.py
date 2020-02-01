@@ -16,13 +16,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,re_path
 
+from django.conf import settings
+from django.conf.urls import url, include
+from django.conf.urls.static import static
+
+
 """ 配置 RSS 和 sitemap 的urls"""
 from django.contrib.sitemaps import views as sitemap_views
 from blog.rss import LatestPostFeed
 from blog.sitemap import PostSitemap
 
 from blog.views import (post_list, PostDetailView,post_detail,PostListView,IndexView,CategoryView,TagView,tag_view,
-                        SearchView, AuthorView)
+                        SearchView, AuthorView, Handler404)
 from config.views import links,LinkListView
 from comment.views import CommentView
 
@@ -30,6 +35,9 @@ from typeidea.custom_site import custom_site
 
 import xadmin
 
+from .autocomplete import CategoryAutocomplete, TagAutocomplete
+
+handler404 = Handler404.as_view()
 
 urlpatterns = [
 
@@ -56,6 +64,17 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('admin/', xadmin.site.urls, name='xadmin'),
 
+    path('category-autocomplete/', CategoryAutocomplete.as_view(), name='category-autocomplete'),
+    path('tag-autocomplete/', TagAutocomplete.as_view(), name='tag-autocomplete'),
+
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
 
 
-]
